@@ -1,33 +1,50 @@
 import json
 import discord
 import asyncio
+import random
 import traceback
 import importlib
 from discord.ext import commands
 from timeit import default_timer as timer
 
 import main
-#import functions
-#importlib.reload(functions)
+from qr_generator import generate_qr_code
+#importlib.reload(qr_generator)
 
-def write_json(id, username="None", password="None"):
-    filename="login.json"
-    with open(filename,'r+', encoding="UTF8") as file:
-        file_data = json.load(file)
 
-        if id in file_data:
+def edit_data(id, username="None", password="None"):
+    data = ""
+    with open("login.txt" ,'r', encoding="UTF8") as login_file:
+        # Retrieve encrypted data
+        encrypted_data = login_file.read()
+
+        # Dcrypt data
+        decrypted_data = main.decrypt(main.SECRET_KEY, encrypted_data)
+
+        # Turn data into dictionary
+        data_dict = json.load(decrypted_data)
+
+        # Edit or add user
+        if id in data_dict:
             # Existing User
-            new_username = file_data[id]["user"] if username == "None" else username
-            new_password = file_data[id]["pass"] if password == "None" else password
-            file_data[id] = {"user" : username, "pass" : password}
+            new_username = data_dict[id]["user"] if username == "None" else username
+            new_password = data_dict[id]["pass"] if password == "None" else password
+            data_dict[id] = {"user" : username, "pass" : password}
         else:
             # New User
-            file_data.update({id : {"user" : username, "pass" : password}})
+            data_dict.update({id : {"user" : username, "pass" : password}})
 
-        # Sets file's current position at offset.
-        file.seek(0)
-        # Convert back to json.
-        json.dump(file_data, file, indent = 4)
+        # Return dictionary into string
+        data = json.dumps(data_dict)
+    
+    with open("login.txt" ,'w', encoding="UTF8") as login_file:
+        # Encrypt data and write to file
+        encrypted_data = main.encrypt(main.SECRET_KEY, data)
+        login_file.write(encrypted_data)
+
+def get_user(id):
+    pass
+
 
 class Test(commands.Cog):
 
@@ -36,15 +53,16 @@ class Test(commands.Cog):
 
     @commands.command()
     async def Username(self, ctx, username):
-        write_json(ctx.message.author.id, username)
+        edit_data(ctx.message.author.id, username)
 
     @commands.command()
     async def Password(self, ctx, password):
-        write_json(ctx.message.author.id, password)
+        edit_data(ctx.message.author.id, password)
 
     @commands.command()
     async def Qr(self, ctx):
-        generate_qr_code()
+        username, password = get_user(ctx.message.author.id)
+        generate_qr_code(username, password)
 
 
     #Error handling

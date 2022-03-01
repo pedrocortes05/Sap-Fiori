@@ -1,7 +1,51 @@
 import os
 import discord
 import asyncio
+import random
 from discord.ext import commands, tasks
+
+def generate_secret_key():
+	# Generate new random SECRET KEY
+	secret_key_length = int((random.random() + 50) * 49)
+	new_secret_key = ""
+	for x in range(secret_key_length):
+		new_secret_key += str(int(random.randint(0, 9)))
+
+	# Decrypt data with old key
+	with open("secret_key.txt",'r', encoding="UTF8") as secret_f:
+		current_secret_key = secret_f.read()
+		with open("login.txt" , 'r', encoding="UTF8") as dB:
+			data = decrypt(current_secret_key, dB)
+
+	# Encrypt data with new key
+	with open("secret_key.txt",'w', encoding="UTF8") as secret_f:
+		with open("login.txt" , 'w', encoding="UTF8") as dB:
+			data = encrypt(new_secret_key, data)
+			dB.write(data)
+
+		secret_f.write(new_secret_key)
+	
+	return new_secret_key
+
+def encrypt(secret_key, msg):
+    encrypted_msg = ""
+    counter = 0
+    for char in str(msg):
+        index = (counter + len(secret_key)) % len(secret_key)
+        encrypted_msg += str(chr(ord(char) + int(secret_key[index])))
+        counter += 1
+
+    return encrypted_msg
+
+def decrypt(secret_key, encrypted_msg):
+    decrypted_msg = ""
+    counter = 0
+    for char in str(encrypted_msg):
+        index = (counter + len(secret_key)) % len(secret_key)
+        decrypted_msg += str(chr(ord(char) - int(secret_key[index])))
+        counter += 1
+
+    return decrypted_msg
 
 def get_prefix(client, message):
 	try:
@@ -12,6 +56,7 @@ def get_prefix(client, message):
 
 	return prefix
 
+SECRET_KEY = generate_secret_key()
 
 token = "OTQ4MjE2Njk0NzY0MTA5ODk3.Yh4lnQ.kZEqV_UDBM6fsmIrh-bVdTLd6p0"
 client = commands.Bot(command_prefix = "#", case_insensitive=True)
