@@ -1,8 +1,5 @@
 import json
 import time
-import discord
-import asyncio
-from discord.ext import commands, tasks
 from datetime import date
 from cairosvg import svg2png
 from selenium import webdriver
@@ -15,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as ec
 
 
 token = "OTQ4MjE2Njk0NzY0MTA5ODk3.Yh4lnQ.kZEqV_UDBM6fsmIrh-bVdTLd6p0"
-client = commands.Bot(command_prefix = get_prefix, case_insensitive=True)
+client = commands.Bot(case_insensitive=True)
 client.remove_command("help")
 
 
@@ -40,7 +37,7 @@ search.send_keys(Keys.RETURN)
 
 #Click Questionare button
 WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__tile0-title-inner")))
-#driver.find_element(By.CSS_SELECTOR, "#__tile0-title-inner").click()
+driver.find_element(By.CSS_SELECTOR, "#__tile0-title-inner").click()
 
 #Submit questionare
 #TODO code
@@ -56,8 +53,5 @@ svg_code = driver.find_element(By.CSS_SELECTOR, "#__html0").get_attribute("outer
 
 # mm_dd_y
 date_str = date.today().strftime("%m_%d_%y")
-save_path = f"/home/pedro/Documents/Projects/Misc/Sap-Fiori/{date_str}.png"
+save_path = f"/home/pedro/Documents/Projects/Sap-Fiori/QR-Codes/{date_str}.png"
 svg2png(bytestring=svg_code, write_to=save_path)
-
-
-client.run(token)
