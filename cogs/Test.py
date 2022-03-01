@@ -1,3 +1,4 @@
+import json
 import discord
 import asyncio
 import traceback
@@ -9,6 +10,25 @@ import main
 #import functions
 #importlib.reload(functions)
 
+def write_json(id, username="None", password="None"):
+    filename="login.json"
+    with open(filename,'r+', encoding="UTF8") as file:
+        file_data = json.load(file)
+
+        if id in file_data:
+            # Existing User
+            new_username = file_data[id]["user"] if username == "None" else username
+            new_password = file_data[id]["pass"] if password == "None" else password
+            file_data[id] = {"user" : username, "pass" : password}
+        else:
+            # New User
+            file_data.update({id : {"user" : username, "pass" : password}})
+
+        # Sets file's current position at offset.
+        file.seek(0)
+        # Convert back to json.
+        json.dump(file_data, file, indent = 4)
+
 class Test(commands.Cog):
 
     def __init__(self, client):
@@ -16,11 +36,15 @@ class Test(commands.Cog):
 
     @commands.command()
     async def Username(self, ctx, username):
-        print(username)
+        write_json(ctx.message.author.id, username)
 
     @commands.command()
     async def Password(self, ctx, password):
-        print(password)
+        write_json(ctx.message.author.id, password)
+
+    @commands.command()
+    async def Qr(self, ctx):
+        generate_qr_code()
 
 
     #Error handling

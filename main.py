@@ -4,14 +4,11 @@ import asyncio
 from discord.ext import commands, tasks
 
 def get_prefix(client, message):
-	with open("prefixes.json", 'r') as f:
-		pass
-		#prefixes = json.load(f)
-
 	try:
-		prefix = prefixes[str(message.guild.id)]
+		#prefix = prefixes[str(message.guild.id)]
+		prefix = 'sap!'
 	except:
-		prefix = '#'
+		prefix = 'sap!'
 
 	return prefix
 
