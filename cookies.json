@@ -1,0 +1,29 @@
+[
+    {
+        "domain": ".hana.ondemand.com",
+        "httpOnly": true,
+        "name": "JTENANTSESSIONID_aj982psom1",
+        "path": "/",
+        "sameSite": "None",
+        "secure": true,
+        "value": "te9Xo4Hp8KFh7tRlhHhpIFUFIvpnAUVVLNK9kq7%2Bv98%3D"
+    },
+    {
+        "domain": "flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com",
+        "httpOnly": true,
+        "name": "JSESSIONID",
+        "path": "/",
+        "sameSite": "None",
+        "secure": true,
+        "value": "7E3F71135517EDAC2E587CE0EB15EB6D3FFB668A5BE6B35E8793B5F33535D9A3"
+    },
+    {
+        "domain": "flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com",
+        "httpOnly": true,
+        "name": "BIGipServerdispatcher.us3.hana.ondemand.com",
+        "path": "/",
+        "sameSite": "None",
+        "secure": true,
+        "value": "!VpHmV7FxCNOQGgEIkCvCHBySfOeE2gcsomM8Hd+qri5NPBzivm7tuQ46TWeb7noAcHGyLpC4K55GPQU="
+    }
+]
