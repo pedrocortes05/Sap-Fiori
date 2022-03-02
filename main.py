@@ -53,9 +53,8 @@ def get_prefix(client, message):
 	prefix = "sap!"
 	return prefix
 
+
 SECRET_KEY = generate_secret_key()
-
-
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True)
 client.remove_command("help")
 
