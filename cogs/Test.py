@@ -108,8 +108,11 @@ class Test(commands.Cog):
 		username, password = get_user(ctx.message.author.id)
 		if username:
 			await ctx.send("Gimme a sec bro")
-			res = await qr_generator.generate_qr_code(ctx, username, password)
-			if res != 0: await ctx.send(res)
+			try:
+				await qr_generator.generate_qr_code(ctx, username, password)
+			except:
+				await ctx.send("Error ocurred from the Sap Fiori website")
+				print(traceback.format_exc())
 		else:
 			await ctx.send("You need to sign up first")
 
@@ -118,7 +121,9 @@ class Test(commands.Cog):
 	@commands.Cog.listener()
 	async def on_command_error(self, ctx, error):
 		if isinstance(error, commands.CommandNotFound):
-			await ctx.send("Invalid command")
+			pass
+			# if ctx.message.content.lower() not in ('y', 'n', "yes", "no"):
+			# 	await ctx.send("Invalid command")
 
 	@Username.error
 	async def Username_error(self, ctx, error):
