@@ -14,8 +14,9 @@ def generate_secret_key():
 	# Decrypt data with old key
 	with open("secret_key.txt",'r', encoding="UTF8") as secret_f:
 		current_secret_key = secret_f.read()
+		if current_secret_key == '': current_secret_key = "0"
 		with open("login.txt" , 'r', encoding="UTF8") as dB:
-			data = decrypt(current_secret_key, dB)
+			data = decrypt(current_secret_key, dB.read())
 
 	# Encrypt data with new key
 	with open("secret_key.txt",'w', encoding="UTF8") as secret_f:
@@ -59,12 +60,12 @@ def get_prefix(client, message):
 SECRET_KEY = generate_secret_key()
 
 token = "OTQ4MjE2Njk0NzY0MTA5ODk3.Yh4lnQ.kZEqV_UDBM6fsmIrh-bVdTLd6p0"
-client = commands.Bot(command_prefix = "#", case_insensitive=True)
-#client.remove_command("help")
+client = commands.Bot(command_prefix = get_prefix, case_insensitive=True)
+client.remove_command("help")
 
 @client.event
 async def on_ready():
-	await client.change_presence(status=discord.Status.online, activity=discord.Game("Generating QR codes"))
+	await client.change_presence(status=discord.Status.online, activity=discord.Game("QR codes | sap!"))
 	print(f"Logged in as {client.user}")
 
 @client.command()
