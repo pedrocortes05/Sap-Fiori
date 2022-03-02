@@ -56,7 +56,6 @@ def get_prefix(client, message):
 SECRET_KEY = generate_secret_key()
 
 
-token = "OTQ4MjE2Njk0NzY0MTA5ODk3.Yh4lnQ.kZEqV_UDBM6fsmIrh-bVdTLd6p0"
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True)
 client.remove_command("help")
 
