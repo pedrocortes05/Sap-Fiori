@@ -41,9 +41,17 @@ async def generate_qr_code(ctx, username, password):
     try:
         submitted = False
         WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__content2-footer-text")))
-        await asyncio.sleep(1)
-        search = driver.find_elements(By.CSS_SELECTOR, "#__content2-footer-text")
-        if date.today().strftime("%m/%d") in search.text: submitted = True
+        await asyncio.sleep(2)
+        search = driver.find_element(By.CSS_SELECTOR, "#__content2-footer-text")
+        if "Cargando" in search.text:
+            await ctx.send("Sap FIori webpage not loading")
+            return
+
+        date_str = date.today().strftime("%m/%d")
+        for x in range(1, 10):
+            date_str = date_str.replace(f"0{x}", str(x))
+
+        if date_str in search.text: submitted = True
     except:
         submitted = False
 
@@ -83,7 +91,7 @@ async def generate_qr_code(ctx, username, password):
                             **Dolor de garganta o al tragar**: NO
                             **Irritación en los ojos (ardor y/o comezón)**: NO
                             **Dolor de pecho**: NO
-                            **En los últimos 10 días, ¿has tenido contacto estrecho con un caso positivo sin mantener los protocolos preventivos como uso de cubrebocas y esquema de vacunación?**: NO"""
+                            **¿Has tenido contacto estrecho con un caso positivo sin mantener los protocolos preventivos como uso de cubrebocas y esquema de vacunación?**: NO"""
 
         embed.add_field(name="__Información Personal__", value=personal_info, inline=False)
         embed.add_field(name="__Diagnóstico COVID-19__", value=covid_info, inline=False)
@@ -98,7 +106,7 @@ async def generate_qr_code(ctx, username, password):
             return
 
         if reply.content.lower() not in ('y', "yes"):
-            await ctx.send("TODO")
+            await ctx.send("Ok...")
             return
 
         search = driver.find_element(By.XPATH, "//*[contains(@id, '__button') and contains(@data-sap-ui, '__button') and contains(@style, 'width')]").click()
@@ -117,6 +125,6 @@ async def generate_qr_code(ctx, username, password):
     date_str = date.today().strftime("%m_%d_%y")
     save_path = f"/home/pedro/Documents/Projects/Sap-Fiori/QR-Codes/QR_{date_str}.png"
     svg2png(bytestring=svg_code, write_to=save_path)
-    
+
     # Send QR code
     await ctx.send(date_str.replace('_', '/'), file=discord.File(save_path))
