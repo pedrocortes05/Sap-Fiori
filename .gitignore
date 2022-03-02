@@ -1,1 +1,5 @@
 __pycache__/
+QR-Codes/
+login.txt
+secret_key.txt
+discord_token.py
