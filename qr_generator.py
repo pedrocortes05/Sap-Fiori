@@ -34,24 +34,25 @@ async def generate_qr_code(ctx, username, password):
     # Check username and password
     search = driver.find_elements(By.XPATH, '//*[@id="errorText"]')
     if len(search) > 0:
-        return search[0].text
+        await ctx.send(search[0].text)
+        return
 
     # Check if already submitted
     try:
         submitted = False
         WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__content2-footer-text")))
+        await asyncio.sleep(1)
         search = driver.find_elements(By.CSS_SELECTOR, "#__content2-footer-text")
-        if len(search) > 0:
-            submitted = True
+        if date.today().strftime("%m/%d") in search.text: submitted = True
     except:
         submitted = False
 
-    print("hii")
     if not submitted:
         #Click Questionare button
         driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#regresoseguroform-Display")
 
         # Information
+        WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__text7")))
         title = driver.find_element(By.CSS_SELECTOR, "#__text7").text
         info = driver.find_element(By.CSS_SELECTOR, "#__form6--Layout")
         name = info.find_element(By.CSS_SELECTOR, "#__text10").text
@@ -69,7 +70,9 @@ async def generate_qr_code(ctx, username, password):
         
         covid_info = "¿Has sido diagnosticado como caso positivo COVID en los últimos 10 días?: NO"
 
-        symptoms_info = """**Temperatura ≥ 37.5ºC**: NO
+        symptoms_info = """__En los últimos 10 días ¿Has presentado uno o más de los siguientes signos o síntomas?__
+                            __*Elige únicamente los síntomas de reciente aparición y los que no estén relacionados a alguna enfermedad que padezcas.__
+                            **Temperatura ≥ 37.5ºC**: NO
                             **Dolor de cabeza intenso**: NO
                             **Tos de reciente aparición**: NO
                             **Dificultad para respirar**: NO
@@ -87,7 +90,7 @@ async def generate_qr_code(ctx, username, password):
         embed.add_field(name="__Diagnóstico COVID-19__", value=covid_info, inline=False)
         embed.add_field(name="__Cuestionario de síntomas__", value=symptoms_info, inline=False)
         await ctx.send(embed=embed)
-        await ctx.send("Confirm (y/n/yes/no)")
+        await ctx.send("¿Confirmas que la información ingresada es correcta? (y/n/yes/no)")
 
         try:
             reply = await main.client.wait_for("message", check=lambda m:m.author==ctx.author and m.channel.id==ctx.channel.id, timeout=30.0)
@@ -99,15 +102,16 @@ async def generate_qr_code(ctx, username, password):
             await ctx.send("TODO")
             return
 
-        #TODO Submit questionare
+        search = driver.find_element(By.XPATH, "//*[contains(@id, '__button') and contains(@data-sap-ui, '__button') and contains(@style, 'width')]").click()
+        driver.find_element(By.XPATH, "//*[contains(@id, '__mbox-btn-') and contains(@data-sap-ui, 'mbox-btn-') and contains(@aria-describedby, 'text')]").click()
 
     #Click QR button
+    await asyncio.sleep(1)
     driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#qr-Display")
 
     #QR SVG
     WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__html0")))
     svg_code = driver.find_element(By.CSS_SELECTOR, "#__html0").get_attribute("outerHTML")
-    print(svg_code)
     driver.close()
 
     # mm_dd_y
