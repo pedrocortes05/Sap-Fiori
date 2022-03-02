@@ -50,12 +50,7 @@ def decrypt(secret_key, encrypted_msg):
     return decrypted_msg
 
 def get_prefix(client, message):
-	try:
-		#prefix = prefixes[str(message.guild.id)]
-		prefix = 'sap!'
-	except:
-		prefix = 'sap!'
-
+	prefix = "sap!"
 	return prefix
 
 SECRET_KEY = generate_secret_key()
