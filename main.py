@@ -50,7 +50,7 @@ def decrypt(secret_key, encrypted_msg):
     return decrypted_msg
 
 def get_prefix(client, message):
-	prefix = "sap!"
+	prefix = ''
 	return prefix
 
 
@@ -60,7 +60,7 @@ client.remove_command("help")
 
 @client.event
 async def on_ready():
-	await client.change_presence(status=discord.Status.online, activity=discord.Game("QR codes | sap!"))
+	await client.change_presence(status=discord.Status.online, activity=discord.Game("QR codes | help"))
 	print(f"Logged in as {client.user}")
 
 @client.command()
