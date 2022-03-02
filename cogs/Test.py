@@ -85,7 +85,9 @@ class Test(commands.Cog):
 		
 		notice = """This is an __unofficial__ Sap Fiori bot
 					All information is safely stored and encrypted
-					Please answer the questionare truthfully"""
+					Please answer the questionare truthfully
+					Sap Fiori bot is open-source software available at
+					https://github.com/pedrocortes05/Sap-Fiori"""
 		
 		embed.add_field(name="__Commands__", value=commands, inline=False)
 		embed.add_field(name="__Notice__", value=commands, inline=False)
@@ -98,7 +100,7 @@ class Test(commands.Cog):
 
 	@commands.command()
 	async def Password(self, ctx, password):
-		edit_data(str(ctx.message.author.id), "None", password=password)
+		edit_data(str(ctx.message.author.id), password=password)
 		await ctx.send("Password was saved successfully")
 
 	@commands.command()
