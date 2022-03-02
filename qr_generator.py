@@ -14,7 +14,7 @@ import main
 
 async def generate_qr_code(ctx, username, password):
     chrome_options = Options()
-    #chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--incognito")
 
     service = Service("/home/pedro/Downloads/chromedriver_linux64/chromedriver")
@@ -23,6 +23,7 @@ async def generate_qr_code(ctx, username, password):
     driver = webdriver.Remote(service.service_url, options=chrome_options)
     driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#Shell-home")
 
+    WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.ID, "Ecom_User_ID")))
     search = driver.find_element(By.ID, "Ecom_User_ID")
     search.send_keys(username)
 
@@ -35,80 +36,84 @@ async def generate_qr_code(ctx, username, password):
     if len(search) > 0:
         return search[0].text
 
-    #driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#Shell-home")
-
-    #Click Questionare button
-    WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__tile0-title-inner")))
-    driver.find_element(By.CSS_SELECTOR, "#__tile0-title-inner").click()
-
-    #TODO check if alreafy submitted
-    import time
-    time.sleep(5)
-
-    # Informacion
-    title = driver.find_element(By.CSS_SELECTOR, "#__text7").text
-    info = driver.find_element(By.CSS_SELECTOR, "#__form6--Layout")
-    name = info.find_element(By.CSS_SELECTOR, "#__text10").text
-    matricula = info.find_element(By.CSS_SELECTOR, "#__text11").text
-    email = info.find_element(By.CSS_SELECTOR, "#__text12").text
-    phone = info.find_element(By.CSS_SELECTOR, "#__input2-inner").get_attribute("value")
-
-    embed = discord.Embed(title=title, color=ctx.me.color)
-    embed.set_author(name="Sap Fiori", icon_url="https://cdn.discordapp.com/avatars/948216694764109897/4defcaf7e389b38f73717868d21e901d.webp?size=128")
-
-    personal_info = f"""**Nombre**: {name}
-                        **Matrícula**: {matricula}
-                        **Email**: {email}
-                        **Celular**: {phone}"""
-    
-    covid_info = "¿Has sido diagnosticado como caso positivo COVID en los últimos 10 días?: NO"
-
-    symptoms_info = """**Temperatura ≥ 37.5ºC**: NO
-                        **Dolor de cabeza intenso**: NO
-                        **Tos de reciente aparición**: NO
-                        **Dificultad para respirar**: NO
-                        **Dificultad para percibir olores**: NO
-                        **Dificultad para percibir sabores**: NO
-                        **Escurrimiento nasal**: NO
-                        **Dolor muscular**: NO
-                        **Dolor en articulaciones**: NO
-                        **Dolor de garganta o al tragar**: NO
-                        **Irritación en los ojos (ardor y/o comezón)**: NO
-                        **Dolor de pecho**: NO
-                        **En los últimos 10 días, ¿has tenido contacto estrecho con un caso positivo sin mantener los protocolos preventivos como uso de cubrebocas y esquema de vacunación?**: NO"""
-
-    embed.add_field(name="__Información Personal__", value=personal_info, inline=False)
-    embed.add_field(name="__Diagnóstico COVID-19__", value=covid_info, inline=False)
-    embed.add_field(name="__Cuestionario de síntomas__", value=symptoms_info, inline=False)
-    await ctx.send(embed=embed)
-    await ctx.send("Confirm (y/n/yes/no)")
-
+    # Check if already submitted
     try:
-        reply = await main.client.wait_for("message", check=lambda m:m.author==ctx.author and m.channel.id==ctx.channel.id, timeout=30.0)
-    except asyncio.TimeoutError:
-        await ctx.send("Time's up")
-        return
+        submitted = False
+        WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__content2-footer-text")))
+        search = driver.find_elements(By.CSS_SELECTOR, "#__content2-footer-text")
+        if len(search) > 0:
+            submitted = True
+    except:
+        submitted = False
 
-    if reply.content.lower() not in ('y', "yes"):
-        await ctx.send("TODO")
-        return
+    print("hii")
+    if not submitted:
+        #Click Questionare button
+        driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#regresoseguroform-Display")
 
-    #Submit questionare
-    #TODO code
-    #driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#Shell-home")
+        # Information
+        title = driver.find_element(By.CSS_SELECTOR, "#__text7").text
+        info = driver.find_element(By.CSS_SELECTOR, "#__form6--Layout")
+        name = info.find_element(By.CSS_SELECTOR, "#__text10").text
+        matricula = info.find_element(By.CSS_SELECTOR, "#__text11").text
+        email = info.find_element(By.CSS_SELECTOR, "#__text12").text
+        phone = info.find_element(By.CSS_SELECTOR, "#__input2-inner").get_attribute("value")
+
+        embed = discord.Embed(title=title, color=ctx.me.color)
+        embed.set_author(name="Sap Fiori", icon_url="https://cdn.discordapp.com/avatars/948216694764109897/4defcaf7e389b38f73717868d21e901d.webp?size=128")
+
+        personal_info = f"""**Nombre**: {name}
+                            **Matrícula**: {matricula}
+                            **Email**: {email}
+                            **Celular**: {phone}"""
+        
+        covid_info = "¿Has sido diagnosticado como caso positivo COVID en los últimos 10 días?: NO"
+
+        symptoms_info = """**Temperatura ≥ 37.5ºC**: NO
+                            **Dolor de cabeza intenso**: NO
+                            **Tos de reciente aparición**: NO
+                            **Dificultad para respirar**: NO
+                            **Dificultad para percibir olores**: NO
+                            **Dificultad para percibir sabores**: NO
+                            **Escurrimiento nasal**: NO
+                            **Dolor muscular**: NO
+                            **Dolor en articulaciones**: NO
+                            **Dolor de garganta o al tragar**: NO
+                            **Irritación en los ojos (ardor y/o comezón)**: NO
+                            **Dolor de pecho**: NO
+                            **En los últimos 10 días, ¿has tenido contacto estrecho con un caso positivo sin mantener los protocolos preventivos como uso de cubrebocas y esquema de vacunación?**: NO"""
+
+        embed.add_field(name="__Información Personal__", value=personal_info, inline=False)
+        embed.add_field(name="__Diagnóstico COVID-19__", value=covid_info, inline=False)
+        embed.add_field(name="__Cuestionario de síntomas__", value=symptoms_info, inline=False)
+        await ctx.send(embed=embed)
+        await ctx.send("Confirm (y/n/yes/no)")
+
+        try:
+            reply = await main.client.wait_for("message", check=lambda m:m.author==ctx.author and m.channel.id==ctx.channel.id, timeout=30.0)
+        except asyncio.TimeoutError:
+            await ctx.send("Time's up")
+            return
+
+        if reply.content.lower() not in ('y', "yes"):
+            await ctx.send("TODO")
+            return
+
+        #TODO Submit questionare
 
     #Click QR button
-    WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__tile1-subHdr-text")))
-    driver.find_element(By.CSS_SELECTOR, "#__tile1-subHdr-text").click()
+    driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#qr-Display")
 
     #QR SVG
     WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.CSS_SELECTOR, "#__html0")))
     svg_code = driver.find_element(By.CSS_SELECTOR, "#__html0").get_attribute("outerHTML")
+    print(svg_code)
+    driver.close()
 
     # mm_dd_y
     date_str = date.today().strftime("%m_%d_%y")
-    save_path = f"/home/pedro/Documents/Projects/Sap-Fiori/QR-Codes/{matricula}_{date_str}.png"
+    save_path = f"/home/pedro/Documents/Projects/Sap-Fiori/QR-Codes/QR_{date_str}.png"
     svg2png(bytestring=svg_code, write_to=save_path)
     
     # Send QR code
-    await ctx.send(date_str, file=discord.File(save_path))
+    await ctx.send(date_str.replace('_', '/'), file=discord.File(save_path))
