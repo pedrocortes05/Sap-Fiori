@@ -74,8 +74,8 @@ class Test(commands.Cog):
 	
 	@commands.group(invoke_without_command=True)
 	async def help(self, ctx):
-		embed = discord.Embed(title="Mapgame Commands", color=ctx.me.color)
-		embed.set_author(name="Mapgame", icon_url="https://cdn.discordapp.com/avatars/948216694764109897/4defcaf7e389b38f73717868d21e901d.webp?size=128")
+		embed = discord.Embed(title="Commands", color=ctx.me.color)
+		embed.set_author(name="Sap Fiori", icon_url="https://cdn.discordapp.com/avatars/948216694764109897/4defcaf7e389b38f73717868d21e901d.webp?size=128")
 		prefix = main.get_prefix(main.client, ctx)
 
 		commands = f"""**{prefix}help**: - Opens this lmao
@@ -90,7 +90,7 @@ class Test(commands.Cog):
 					https://github.com/pedrocortes05/Sap-Fiori"""
 		
 		embed.add_field(name="__Commands__", value=commands, inline=False)
-		embed.add_field(name="__Notice__", value=commands, inline=False)
+		embed.add_field(name="__Notice__", value=notice, inline=False)
 		await ctx.send(embed=embed)
 
 	@commands.command(pass_context=True)
