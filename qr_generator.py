@@ -71,7 +71,6 @@ async def generate_qr_code(ctx, username, password):
         covid_info = "¿Has sido diagnosticado como caso positivo COVID en los últimos 10 días?: NO"
 
         symptoms_info = """__En los últimos 10 días ¿Has presentado uno o más de los siguientes signos o síntomas?__
-                            __*Elige únicamente los síntomas de reciente aparición y los que no estén relacionados a alguna enfermedad que padezcas.__
                             **Temperatura ≥ 37.5ºC**: NO
                             **Dolor de cabeza intenso**: NO
                             **Tos de reciente aparición**: NO
