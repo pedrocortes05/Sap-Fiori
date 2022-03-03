@@ -2,3 +2,5 @@ discord.py==1.7.3
 asyncio
 CairoSVG
 selenium
+webdriver-manager
+Pillow
