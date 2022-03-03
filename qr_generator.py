@@ -1,3 +1,4 @@
+import os
 import discord
 import asyncio
 from datetime import date
@@ -9,8 +10,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from PIL import Image, ImageDraw, ImageFilter
 
 import main
+
+DIR = os.getcwd()
 
 async def generate_qr_code(ctx, username, password):
     chrome_options = Options()
@@ -123,8 +127,16 @@ async def generate_qr_code(ctx, username, password):
 
     # mm_dd_y
     date_str = date.today().strftime("%m_%d_%y")
-    save_path = f"/home/pedro/Documents/Projects/Sap-Fiori/QR-Codes/QR_{date_str}.png"
+
+    # QR code into a png
+    save_path = f"{DIR}/QR-Codes/QR_{date_str}.png"
     svg2png(bytestring=svg_code, write_to=save_path)
+
+    # Edit QR code into white background
+    img_bg = Image.open(f"{DIR}/QR-Codes/white_bg.png")
+    img_qr = Image.open(save_path)
+    img_bg.paste(img_qr, (int(img_bg.width/2), int(img_bg.height/2)))
+    img_bg.save(save_path, quality=95)
 
     # Send QR code
     await ctx.send(date_str.replace('_', '/'), file=discord.File(save_path))
