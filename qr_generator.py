@@ -18,13 +18,16 @@ DIR = os.getcwd()
 
 async def generate_qr_code(ctx, username, password):
     chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--incognito")
 
-    service = Service("/home/pedro/Downloads/chromedriver_linux64/chromedriver")
-    service.start()
+    #service = Service("/home/pedro/Downloads/chromedriver_linux64/chromedriver")
+    #service.start()
 
-    driver = webdriver.Remote(service.service_url, options=chrome_options)
+    #driver = webdriver.Remote(service.service_url, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get("https://flpnwc-aj982psom1.dispatcher.us3.hana.ondemand.com/sites/regresoseguro#Shell-home")
 
     WebDriverWait(driver, 20).until(ec.visibility_of_element_located((By.ID, "Ecom_User_ID")))
@@ -135,7 +138,7 @@ async def generate_qr_code(ctx, username, password):
     # Edit QR code into white background
     img_bg = Image.open(f"{DIR}/QR-Codes/white_bg.png")
     img_qr = Image.open(save_path)
-    img_bg.paste(img_qr, (int(img_bg.width/2), int(img_bg.height/2)))
+    img_bg.paste(img_qr, (int(img_bg.width/4), int(img_bg.height/4)))
     img_bg.save(save_path, quality=95)
 
     # Send QR code
